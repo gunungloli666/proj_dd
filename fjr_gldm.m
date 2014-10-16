@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 15-Oct-2014 16:10:22
+% Last Modified by GUIDE v2.5 16-Oct-2014 13:01:41
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -115,7 +115,12 @@ function deleteButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % delete(handles.plot1);
 cla(handles.axesImage );
-cla(handles.axesProperty); 
+% axes(handles.axes_1); 
+cla(handles.axes_1); 
+cla(handles.axes_2); 
+cla(handles.axes_3); 
+cla(handles.axes_4); 
+clc; 
 
 
 % --- Executes on button press in openButton.
@@ -161,7 +166,52 @@ m = handles.image;
 
 imshow(m, 'parent', handles.axesImage); 
 
-axes(handles.axesProperty);
+% axes(handles.axes_1);
 
-imhist(handles.image); 
+cropped = imcrop(m, [ 10, 10, 100, 100 ]); 
 
+% imshow(cropped, 'parent',  handles.axes_1);  
+
+
+% hitung fungsi 
+d = 4;
+s =size(cropped);
+I  =double(cropped) ;
+pro1=zeros(s);
+pro2=zeros(s);
+pro3=zeros(s);
+pro4=zeros(s);
+for i=1:s(1)
+    for j=1:s(2)
+        if((j+d)<=s(2))
+            pro1(i,j)=abs(I(i,j)-I(i,(j+d)));
+        end
+        if((i-d)>0)&&((j+d)<=s(2))
+            pro2(i,j)=abs(I(i,j)-I((i-d),(j+d)));
+        end
+        if((i+d)<=s(1))
+            pro3(i,j)=abs(I(i,j)-I((i+d),j));
+        end
+        if((i-d)>0)&&((j-d)>0)
+            pro4(i,j)=abs(I(i,j)-I((i-d),(j-d)));
+        end
+    end
+end
+% %probability density functions
+[cnt x]=imhist(uint8(pro1));
+pdf1 = cumsum(cnt);
+[cnt x]=imhist(uint8(pro2));
+pdf2 = cumsum(cnt);
+[cnt x]=imhist(uint8(pro3));
+pdf3 = cumsum(cnt);
+[cnt x]=imhist(uint8(pro4));
+pdf4 = cumsum(cnt);
+abhi2=pdf1-pdf4;
+abhi3=pdf2-pdf3; 
+abhi4=pdf2-pdf4; 
+abhi5=pdf3-pdf4; 
+
+plot(abhi2, 'parent', handles.axes_1);
+plot(abhi2, 'parent', handles.axes_2 );
+plot(abhi3, 'parent', handles.axes_3);
+plot(abhi4, 'parent', handles.axes_4 );
