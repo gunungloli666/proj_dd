@@ -17,6 +17,8 @@ uicontrol('position', [120, 10 , 100, 30 ], 'style', 'pushButton', ...
 ax1 = axes('units', 'pix', 'position', [30, 70,  400, 300], ... 
     'parent', f, 'Tag', 'axisplot');   
 
+ax2 = axes('units', 'pix', 'position', [470, 70, 400, 300], 'parent',f ,... 
+    'Tag', 'axisproperty'); 
 
 function open(hObject, handles)
 try
@@ -31,12 +33,24 @@ end
 
 
 function plot(hObject, eventData)
-button = findobj('tag', 'tombolUtama'); 
-im = get(button, 'userdata');
-% if ~isfield
+% button = findobj('tag', 'tombolUtama'); 
+% im = get(button, 'userdata');
+% % if ~isfield
+% 
+% axis = findobj('Tag', 'axisplot');
+% imhist(im.image , 'parent', axis);  
+% 
+% 
+% ax2 = findobj('Tag', 'axisproperty'); 
+% axes(ax2); 
+% 
+% pause(2); 
+% imhist(im.image , 'parent', ax2 );  
 
-axis = findobj('Tag', 'axisplot');
-imshow(im.image , 'parent', axis);  
+
+I = imread('test1.jpg'); 
+
+imhist(I);
 
 
 

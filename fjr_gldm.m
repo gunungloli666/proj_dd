@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 07-Oct-2014 10:47:38
+% Last Modified by GUIDE v2.5 15-Oct-2014 16:10:22
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -63,7 +63,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 clc;
-
+clear all; 
 % UIWAIT makes fjr_gldm wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -84,17 +84,12 @@ function startGldmButton_Callback(hObject, eventdata, handles)
 % hObject    handle to startGldmButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-x = 0; 
-y = 0;
-
 try 
 x = handles.x;
 y = handles.y;
 catch ME
     return; 
 end 
-
 hanldes.plot1 = plot(handles.axesImage, x, y ); 
 
 
@@ -120,4 +115,53 @@ function deleteButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % delete(handles.plot1);
 cla(handles.axesImage );
+cla(handles.axesProperty); 
+
+
+% --- Executes on button press in openButton.
+function openButton_Callback(hObject, eventdata, handles)
+% hObject    handle to openButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+try
+    fileName = uigetfile({'*.png; '}, 'Pilih File');  
+    I = imread(fileName); 
+%     [count , bin] =  imhi(I); 
+    % imshow(I, 'parent', handles.axesImage); 
+    handles.image = I; 
+    set(hObject , 'Tag', 'fajarImage'); 
+%     handles.count = count; 
+%     handles.bin = bin; 
+catch ME 
+    disp('error in load file');
+    return; 
+end
+guidata(hObject, handles);
+
+
+
+% --- Executes on button press in togglebutton1.
+function togglebutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to togglebutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of togglebutton1
+
+
+% --- Executes on button press in plotButton.
+function plotButton_Callback(hObject, eventdata, handles)
+% hObject    handle to plotButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if ~isfield(handles, 'image')
+    return; 
+end 
+m = handles.image; 
+
+imshow(m, 'parent', handles.axesImage); 
+
+axes(handles.axesProperty);
+
+imhist(handles.image); 
 
