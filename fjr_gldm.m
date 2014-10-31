@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 16-Oct-2014 13:01:41
+% Last Modified by GUIDE v2.5 31-Oct-2014 12:49:07
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -116,11 +116,7 @@ function deleteButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % delete(handles.plot1);
 cla(handles.axesImage );
-% axes(handles.axes_1); 
-cla(handles.axes_1); 
-cla(handles.axes_2); 
-cla(handles.axes_3); 
-cla(handles.axes_4); 
+% axes(handles.axes_1);
 clc; 
 
 
@@ -132,12 +128,8 @@ function openButton_Callback(hObject, eventdata, handles)
 try
     fileName = uigetfile({'*.jpg;' }, 'Pilih File');  
     I = imread(fileName); 
-%     [count , bin] =  imhi(I); 
-    % imshow(I, 'parent', handles.axesImage); 
     handles.image = I; 
     set(hObject , 'Tag', 'fajarImage'); 
-%     handles.count = count; 
-%     handles.bin = bin; 
 catch ME 
     disp('error in load file');
     return; 
@@ -165,64 +157,6 @@ if ~isfield(handles, 'image')
 end 
 m = handles.image; 
 
-imshow(m, 'parent', handles.axesImage); 
-
-% axes(handles.axes_1);
-
-cropped = imcrop(m, [ 10, 10, 100, 100 ]); 
-
-% imshow(cropped, 'parent',  handles.axes_1);  
-
-% hitung fungsi 
-
-d = 4;
-
-s = size(cropped);
-I = double(cropped) ;
-
-pro1=zeros(s);
-pro2=zeros(s);
-pro3=zeros(s);
-pro4=zeros(s);
-
-for i=1:s(1)
-    for j=1:s(2)
-        if((j+d)<=s(2))
-            pro1(i,j)=abs(I(i,j)-I(i,(j+d)));
-        end
-        if((i-d)>0)&&((j+d)<=s(2))
-            pro2(i,j)=abs(I(i,j)-I((i-d),(j+d)));
-        end
-        if((i+d)<=s(1))
-            pro3(i,j)=abs(I(i,j)-I((i+d),j));
-        end
-        if((i-d)>0)&&((j-d)>0)
-            pro4(i,j)=abs(I(i,j)-I((i-d),(j-d)));
-        end
-    end
-end
-
-% %probability density functions
-[cnt x]=imhist(rgb2gray(pro1));
-pdf1 = cumsum(cnt);
-[cnt x]=imhist(rgb2gray(pro2));
-pdf2 = cumsum(cnt);
-[cnt x]=imhist(rgb2gray(pro3));
-pdf3 = cumsum(cnt);
-[cnt x]=imhist(rgb2gray(pro4));
-
-pdf4 = cumsum(cnt);
-
-abhi2=pdf1-pdf4;
-abhi3=pdf2-pdf3; 
-abhi4=pdf2-pdf4; 
-abhi5=pdf3-pdf4; 
-
-plot(abhi2, 'parent', handles.axes_1);
-plot(abhi2, 'parent', handles.axes_2 );
-plot(abhi3, 'parent', handles.axes_3);
-plot(abhi4, 'parent', handles.axes_4 );
-
 % GLDM
 [lebar,tinggi] = size(m);
 
@@ -241,7 +175,7 @@ for i=1:tinggi,
                 end
             end
         end
-        rata2 = rata2/((2*m) * (2*m )); 
+        rata2 = rata2/((2*m)*(2*m )); 
         D(i,j)= abs(m(i,j) - rata2);
     end
 end
@@ -253,12 +187,14 @@ for i=1:lebar
         mu = mu + D(i,j); 
     end 
 end 
+mu = mu/(lebar * tinggi); 
 
 % hitung standard deviasi
 sd = 0; 
 for i=1:lebar
     for j=1:tinggi
-        
+        sd = sd + (D(i,j) - mu)^2; 
     end 
 end 
-
+sd = sd/(panjang * lebar);
+sd = sqrt(sd);
