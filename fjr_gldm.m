@@ -157,27 +157,28 @@ if ~isfield(handles, 'image')
 end
 image = handles.image; 
 
-m = imcrop(image, [100,100,200,200]);  
+m = imcrop(image, [10,10,16 ,100]);  
 
+m = rgb2gray(m);
 
 imshow(m,'parent', handles.axesImage); 
 
 drawnow;
 
 % GLDM
-[lebar,tinggi] = size(m);
+[tinggi, lebar] = size(m);
 
-delta = 10;
+delta = 5;
 
 % hitung matriks gray level
-D = zeros(lebar, tinggi); 
+D = zeros(tinggi, lebar); 
 for i=1:tinggi, 
     for j=1:lebar
         rata2 = 0; 
         for x = i-delta:i+delta
             for y = j-delta:j+delta
-                if (x <= lebar) && ( x >= 1) && ... 
-                        (y <= tinggi ) && (y >= 1)
+                if (x <= tinggi ) && ( x >= 1) && ... 
+                        (y <= lebar ) && (y >= 1)
                     rata2 = rata2 + m(x,y);
                 end
             end
@@ -186,8 +187,8 @@ for i=1:tinggi,
         D(i,j)= abs(m(i,j) - rata2);
     end
 end
-
-% hitung mean
+% 
+% % hitung mean
 mu = 0; 
 for i=1:lebar 
     for j=1:tinggi
@@ -195,13 +196,15 @@ for i=1:lebar
     end 
 end 
 mu = mu/(lebar * tinggi); 
-
-% hitung standard deviasi
-sd = 0; 
-for i=1:lebar
-    for j=1:tinggi
-        sd = sd + (D(i,j) - mu)^2; 
-    end 
-end 
-sd = sd/(panjang * lebar);
-sd = sqrt(sd);
+% 
+% % hitung standard deviasi
+% sd = 0; 
+% for i=1:lebar
+%     for j=1:tinggi
+%         sd = sd + (D(i,j) - mu)^2; 
+%     end 
+% end 
+% sd = sd/(panjang * lebar);
+% sd = sqrt(sd);
+set()
+disp('FINISH'); 
