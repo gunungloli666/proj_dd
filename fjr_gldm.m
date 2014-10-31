@@ -26,6 +26,7 @@ function varargout = fjr_gldm(varargin)
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
+
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -129,7 +130,7 @@ function openButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    fileName = uigetfile({'*.png; '}, 'Pilih File');  
+    fileName = uigetfile({'*.jpg;' }, 'Pilih File');  
     I = imread(fileName); 
 %     [count , bin] =  imhi(I); 
     % imshow(I, 'parent', handles.axesImage); 
@@ -172,15 +173,18 @@ cropped = imcrop(m, [ 10, 10, 100, 100 ]);
 
 % imshow(cropped, 'parent',  handles.axes_1);  
 
-
 % hitung fungsi 
+
 d = 4;
-s =size(cropped);
-I  =double(cropped) ;
+
+s = size(cropped);
+I = double(cropped) ;
+
 pro1=zeros(s);
 pro2=zeros(s);
 pro3=zeros(s);
 pro4=zeros(s);
+
 for i=1:s(1)
     for j=1:s(2)
         if((j+d)<=s(2))
@@ -197,15 +201,18 @@ for i=1:s(1)
         end
     end
 end
+
 % %probability density functions
-[cnt x]=imhist(uint8(pro1));
+[cnt x]=imhist(rgb2gray(pro1));
 pdf1 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro2));
+[cnt x]=imhist(rgb2gray(pro2));
 pdf2 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro3));
+[cnt x]=imhist(rgb2gray(pro3));
 pdf3 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro4));
+[cnt x]=imhist(rgb2gray(pro4));
+
 pdf4 = cumsum(cnt);
+
 abhi2=pdf1-pdf4;
 abhi3=pdf2-pdf3; 
 abhi4=pdf2-pdf4; 
@@ -215,3 +222,43 @@ plot(abhi2, 'parent', handles.axes_1);
 plot(abhi2, 'parent', handles.axes_2 );
 plot(abhi3, 'parent', handles.axes_3);
 plot(abhi4, 'parent', handles.axes_4 );
+
+% GLDM
+[lebar,tinggi] = size(m);
+
+delta = 10;
+
+% hitung matriks gray level
+D = zeros(lebar, tinggi); 
+for i=1:tinggi, 
+    for j=1:lebar
+        rata2 = 0; 
+        for x = i-delta:i+delta
+            for y = j-delta:j+delta
+                if (x <= lebar) && ( x >= 1) && ... 
+                        (y <= tinggi ) && (y >= 1)
+                    rata2 = rata2 + m(x,y);
+                end
+            end
+        end
+        rata2 = rata2/((2*m) * (2*m )); 
+        D(i,j)= abs(m(i,j) - rata2);
+    end
+end
+
+% hitung mean
+mu = 0; 
+for i=1:lebar 
+    for j=1:tinggi
+        mu = mu + D(i,j); 
+    end 
+end 
+
+% hitung standard deviasi
+sd = 0; 
+for i=1:lebar
+    for j=1:tinggi
+        
+    end 
+end 
+
