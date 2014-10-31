@@ -154,8 +154,15 @@ function plotButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 if ~isfield(handles, 'image')
     return; 
-end 
-m = handles.image; 
+end
+image = handles.image; 
+
+m = imcrop(image, [100,100,200,200]);  
+
+
+imshow(m,'parent', handles.axesImage); 
+
+drawnow;
 
 % GLDM
 [lebar,tinggi] = size(m);
@@ -175,7 +182,7 @@ for i=1:tinggi,
                 end
             end
         end
-        rata2 = rata2/((2*m)*(2*m )); 
+        rata2 = rata2/((2*lebar)*(2*tinggi )); 
         D(i,j)= abs(m(i,j) - rata2);
     end
 end
