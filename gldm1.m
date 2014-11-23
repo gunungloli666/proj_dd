@@ -265,13 +265,13 @@ for i=1:s(1)
     end
 end
 %probability density functions
-[cnt x]=imhist(uint8(pro1));
+[cnt x]=imhist(rgb2gray(pro1));
 pdf1 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro2));
+[cnt x]=imhist(rgb2gray(pro2));
 pdf2 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro3));
+[cnt x]=imhist(rgb2gray(pro3));
 pdf3 = cumsum(cnt);
-[cnt x]=imhist(uint8(pro4));
+[cnt x]=imhist(rgb2gray(pro4));
 pdf4 = cumsum(cnt);
 abhi2=pdf1-pdf4;
 abhi3=pdf2-pdf3;

@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 31-Oct-2014 12:49:07
+% Last Modified by GUIDE v2.5 23-Nov-2014 23:06:40
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -64,9 +64,9 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 clc;
-clear all; 
-% UIWAIT makes fjr_gldm wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+clear all;
+
+
 
 
 % --- Outputs from this function are returned to the command line.
@@ -132,8 +132,11 @@ try
     set(hObject , 'Tag', 'fajarImage'); 
 catch ME 
     disp('error in load file');
+    report = getReport(ME); 
+    disp(report); 
     return; 
 end
+
 guidata(hObject, handles);
 
 
@@ -149,15 +152,12 @@ function togglebutton1_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in plotButton.
 function plotButton_Callback(hObject, eventdata, handles)
-% hObject    handle to plotButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 if ~isfield(handles, 'image')
     return; 
 end
 image = handles.image; 
 
-m = imcrop(image, [10,10,16 ,100]);  
+m = imcrop(image, [10,10, 400 ,400]);  
 
 m = rgb2gray(m);
 
@@ -172,7 +172,13 @@ delta = 5;
 
 % hitung matriks gray level
 D = zeros(tinggi, lebar); 
+step = floor(tinggi/20); 
 for i=1:tinggi, 
+    if mod(i, step) == 0
+        persen =ceil( i/tinggi * 100); 
+        set(handles.ketProgress, 'string', num2str(persen));  
+        drawnow; 
+   end
     for j=1:lebar
         rata2 = 0; 
         for x = i-delta:i+delta
@@ -187,24 +193,48 @@ for i=1:tinggi,
         D(i,j)= abs(m(i,j) - rata2);
     end
 end
-% 
-% % hitung mean
-mu = 0; 
-for i=1:lebar 
-    for j=1:tinggi
-        mu = mu + D(i,j); 
-    end 
-end 
+
+% mean
+mu = sum(sum(D(:,:))); 
 mu = mu/(lebar * tinggi); 
-% 
-% % hitung standard deviasi
-% sd = 0; 
-% for i=1:lebar
-%     for j=1:tinggi
-%         sd = sd + (D(i,j) - mu)^2; 
-%     end 
-% end 
-% sd = sd/(panjang * lebar);
-% sd = sqrt(sd);
-set()
-disp('FINISH'); 
+
+% sd
+sd = sum(sum((D(:,:)- mu).^2)); 
+sd = sd/(tinggi * lebar);
+sd = sqrt(sd);
+
+set(handles.ketMean, 'string', num2str(mu)); 
+set(handles.ketSD , 'string', num2str(sd)); 
+set(handles.ketFinish , 'string', 'FINISH'); 
+guidata(hObject, handles);
+
+
+% --- Executes on button press in kameraButton.
+function kameraButton_Callback(hObject, eventdata, handles)
+isCamera=get(hObject,'Value'); 
+if isCamera
+%     set(hObject,'String','Stop Camera');
+    axes(handles.axesImage);
+    vid=videoinput('winvideo','USB Camera','YUY2_640x480');
+    set(vid,'ReturnedColorSpace','rgb');
+    set(vid,'LoggingMode','Memory');
+    set(vid,'FramesPerTrigger',Inf);
+    triggerconfig(vid,'manual');
+    z=image(zeros(480,640,3));
+    preview(vid,z);
+    
+    handles.video = vid;    
+end
+handles.vid=vid;
+guidata(hObject,handles);
+
+
+% --- Executes on button press in snapshotButton.
+function snapshotButton_Callback(hObject, eventdata, handles)
+% hObject    handle to snapshotButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+snapshot = getsnapshot(handles.video); 
+handles.image = snapshot; 
+imshow(handles.image, 'parent', handles.axesSnapshot); 
+guidata(hObject,handles);
