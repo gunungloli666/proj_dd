@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 23-Nov-2014 23:06:40
+% Last Modified by GUIDE v2.5 28-Nov-2014 03:01:42
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -66,6 +66,8 @@ guidata(hObject, handles);
 clc;
 clear all;
 
+
+hanldes.rekam = 0; 
 
 
 
@@ -150,26 +152,39 @@ function togglebutton1_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of togglebutton1
 
 
-% --- Executes on button press in plotButton.
-function plotButton_Callback(hObject, eventdata, handles)
+% --- Executes on button press in hitungButton.
+function hitungButton_Callback(hObject, eventdata, handles)
 if ~isfield(handles, 'image')
     return; 
 end
 image = handles.image; 
 
-m = imcrop(image, [10,10, 400 ,400]);  
+[tinggi, lebar] = size(image);
+ukuran = min(tinggi, lebar); 
 
-m = rgb2gray(m);
+% setengah = floor(ukuran * 0.5); 
+% m = imcrop(image, [0,0, setengah,setengah]);  
 
-imshow(m,'parent', handles.axesImage); 
+m = rgb2gray(image);
 
-drawnow;
+imshow(m,'parent', handles.axesSnapshot); 
+
+% drawnow;
 
 % GLDM
 [tinggi, lebar] = size(m);
 
-delta = 5;
+tinggi = floor(tinggi/2); 
+lebar = floor(lebar/2); 
 
+handles.tinggi = tinggi; 
+handles.lebar = lebar; 
+
+delta = floor(min(tinggi, lebar)/ 60);
+
+% disp(['nilai tinggi = ', num2str(tinggi)]); 
+% disp(['nilai lebar = ' , num2str(lebar)]);
+% disp(['nilai delta = ', num2str(delta)]); 
 % hitung matriks gray level
 D = zeros(tinggi, lebar); 
 step = floor(tinggi/20); 
@@ -177,7 +192,7 @@ for i=1:tinggi,
     if mod(i, step) == 0
         persen =ceil( i/tinggi * 100); 
         set(handles.ketProgress, 'string', num2str(persen));  
-        drawnow; 
+         drawnow; 
    end
     for j=1:lebar
         rata2 = 0; 
@@ -186,10 +201,11 @@ for i=1:tinggi,
                 if (x <= tinggi ) && ( x >= 1) && ... 
                         (y <= lebar ) && (y >= 1)
                     rata2 = rata2 + m(x,y);
+%                      drawnow; 
                 end
             end
         end
-        rata2 = rata2/((2*lebar)*(2*tinggi )); 
+        rata2 = rata2/((2*delta)*(2*delta)); 
         D(i,j)= abs(m(i,j) - rata2);
     end
 end
@@ -203,9 +219,36 @@ sd = sum(sum((D(:,:)- mu).^2));
 sd = sd/(tinggi * lebar);
 sd = sqrt(sd);
 
+% ini properti-properti yang diperoleh dari metode GLCM
+
+intensitas = std2(m);
+rata2 = mean2(m);
+entropi = entropy(m);
+GLCM = graycomatrix(m); %menghitung GLCM
+energi = graycoprops(GLCM,{'energy'}); 
+energi_ = struct2array(energi);
+homogeiniti = graycoprops(GLCM,{'homogeneity'});
+homogeiniti_= struct2array(homogeiniti);
+
+disp(energi);
+disp(energi_); 
+
+% C10=[intensitas_10, rata2_10, entropi_10, energi_10, homogeiniti_10]' %Matriks C10
+set(handles.ketIntensitas,'string', num2str(intensitas)); 
+set(handles.ketRata2 , 'string', num2str(rata2)); 
+set(handles.ketEntropi , 'string',  num2str(entropi)); 
+
 set(handles.ketMean, 'string', num2str(mu)); 
 set(handles.ketSD , 'string', num2str(sd)); 
 set(handles.ketFinish , 'string', 'FINISH'); 
+
+[A,B,C,D] = glcm(m);  
+
+A
+B
+C
+D
+
 guidata(hObject, handles);
 
 
@@ -234,7 +277,42 @@ function snapshotButton_Callback(hObject, eventdata, handles)
 % hObject    handle to snapshotButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if ~isfield(handles, 'video')
+    return; 
+end
+
 snapshot = getsnapshot(handles.video); 
 handles.image = snapshot; 
 imshow(handles.image, 'parent', handles.axesSnapshot); 
+
+
+% hitung GLCM
+
+
 guidata(hObject,handles);
+
+
+% --- Executes on button press in toggleRekam.
+function toggleRekam_Callback(hObject, eventdata, handles)
+% hObject    handle to toggleRekam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of toggleRekam
+
+state = get(hObject, 'Value'); 
+if state == get(hObject, 'Max') 
+    handles.rekam = 1; 
+    set(hObject,'String', 'STOP') ; 
+elseif state == get(hObject, 'Min') 
+    handles.rekam = 0;
+    set(hObject, 'String', 'REKAM');
+end
+
+ m = {22,'Samiun', 12000}; 
+% data = get(handles.tableData, 'data');
+set(handles.tableData, 'data', m); 
+% disp(data);
+
+guidata(hObject, handles );
+
