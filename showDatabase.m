@@ -62,8 +62,6 @@ handles.output = hObject;
 
 table = handles.tableGLCM;
 
-
-
 set(table, 'columnName', {'Nama Kain', 'ASM', 'Kontras', 'IDM', 'Entropi', 'Korelasi'})
 % fid = fopen('file.txt','rt');
 % C = textscan(fid, '%s', 'Delimiter',''); C = C{1};
@@ -104,22 +102,30 @@ function inputButton_Callback(hObject, eventdata, handles)
 % hObject    handle to inputButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global table; 
+
+m = rgb2gray(handles.image); 
+
 [A,B,C,D] = glcm(m);  
 
-asm_rata2 = ( A.asm + B.asm + C.asm + D.asm )/ 4
-kontras_rata2 = (A.kontras + B.kontras + C.kontras + D.kontras )/ 4 
-idm_rata2 = (A.idm + B.idm + C.idm + D.idm )/4
-entropi_rata2 = (A.entropi + B.entropi + C.entropi + D.entropi)/4  
-korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4
+asm_rata2 = ( A.asm + B.asm + C.asm + D.asm )/ 4;
+kontras_rata2 = (A.kontras + B.kontras + C.kontras + D.kontras )/ 4 ;
+idm_rata2 = (A.idm + B.idm + C.idm + D.idm )/4; 
+entropi_rata2 = (A.entropi + B.entropi + C.entropi + D.entropi)/4  ; 
+korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4 ; 
+
+global dataTable; 
 
 
-patok = handles.patokan;
+dataTable.asm = num2str(asm_rata2); 
+dataTable.kontras = num2str(kontras_rata2); 
+dataTable.idm = num2str(idm_rata2); 
+dataTable.entropi = num2str(entropi_rata2); 
+dataTable.korelasi = num2str(korelasi_rata2); 
 
-jarak = (asm_rata2 -  patok.asm )^2 + ( kontras_rata2 - patok.kontras)^2 ...
-        + ( idm_rata2 - patok.idm )^2 + (entropi_rata2 - patok.entropi)^2 ... 
-        + (korelasi_rata2 - patok.korelasi)^2 ; 
-    
-jarak = sqrt(jarak)
+fungsiInput = @hasilInputNama; 
+inp = inputNama(); 
+setappdata(inp,'fungsiInput', fungsiInput);
 
 guidata(hObject, handles); 
 
@@ -185,3 +191,15 @@ fprintf(fid, '%s\n', m);
 fclose(fid);
 
 
+function hasilInputNama(varargin) 
+global table; 
+global dataTable; 
+global M; 
+
+C = {varargin{1}, dataTable.asm, dataTable.kontras, dataTable.idm, dataTable.entropi... 
+    dataTable.korelasi}; 
+
+M = cat(1,M,C); 
+% data = get(table, 'data'); 
+
+set(table, 'data', M );  

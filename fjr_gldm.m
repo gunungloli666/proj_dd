@@ -417,10 +417,10 @@ for i=1:a
     jarak = ( database{i,1}- dataUji{1})^2 + (database{i,2} - dataUji{2})^2 ...
         + (database{i,3} - dataUji{3})^2 + (database{i,4}- dataUji{4})^2 ... 
         + (database{i,5} - dataUji{5})^2;
-    jarak = sqrt(jarak)
+    jarak = sqrt(jarak);
     if jarak < jarakMin
         jarakMin = jarak; 
-        key = database{i,6}
+        key = database{i,6};
     end
 end
 
