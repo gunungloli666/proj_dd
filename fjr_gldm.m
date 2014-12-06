@@ -69,20 +69,31 @@ handles.output = hObject;
 
 handles.rekam = 0; 
 
-
 global patokan; 
 
 handles.patok = patokan;
 
 handles.patok
 
-% handles.patokan = patokan; 
+% handles.database = {}; 
+
+% % clc; 
+% fid = fopen('./database/data.txt','r');
+% C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
+% fclose(fid);
+% 
+% D = {} ; 
+% for i=1:numel(C)
+%     temp = {str2double(C{2}{i}), str2double(C{3}{i}), str2double(C{4}{i}), ...
+%         str2double(C{5}{i}) , str2double(C{6}{i})};
+%     D = cat(1,D, temp);  
+% end
+% 
+% handles.database = D;
+
+handles.database = openData(); 
 
 guidata(hObject, handles);
-
-
-
-
 
 
 % --- Outputs from this function are returned to the command line.
@@ -264,13 +275,17 @@ idm_rata2 = (A.idm + B.idm + C.idm + D.idm )/4;
 entropi_rata2 = (A.entropi + B.entropi + C.entropi + D.entropi)/4  ; 
 korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4 ; 
 
-set(handles.ketAsm, 'string' , num2str(asm_rata2)); 
-set(handles.ketKontras , 'string' , num2str(kontras_rata2)); 
-set(handles.ketIdm , 'string' , num2str(idm_rata2)); 
-set(handles.ketEntropi , 'string' , num2str(entropi_rata2)); 
-set(handles.ketKorelasi , 'string' , num2str(korelasi_rata2)); 
+asm = num2str(asm_rata2); 
+kontras = num2str(kontras_rata2); 
+idm = num2str(idm_rat2); 
+entropi = num2str(entropi_rata2); 
+korelasi = num2str(korelasi_rata2); 
 
-
+set(handles.ketAsm, 'string' , asm); 
+set(handles.ketKontras ,'string', kontras); 
+set(handles.ketIdm , 'string' , idm); 
+set(handles.ketEntropi , 'string' , entropi); 
+set(handles.ketKorelasi , 'string' , korelasi); 
 
 global patokan; 
 
@@ -320,10 +335,6 @@ snapshot = getsnapshot(handles.video);
 handles.image = snapshot; 
 imshow(handles.image, 'parent', handles.axesSnapshot); 
 
-
-% hitung GLCM
-
-
 guidata(hObject,handles);
 
 
@@ -350,4 +361,20 @@ set(handles.tableData, 'data', m);
 % disp(data);
 
 guidata(hObject, handles );
+
+
+function D = openData(varargin)
+fid = fopen('./database/data.txt','r');
+C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
+fclose(fid);
+
+D = {} ; 
+for i=1:numel(C)
+    temp = {str2double(C{2}{i}), str2double(C{3}{i}), str2double(C{4}{i}), ...
+        str2double(C{5}{i}) , str2double(C{6}{i})};
+    D = cat(1,D, temp);  
+end
+
+
+
 

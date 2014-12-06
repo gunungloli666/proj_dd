@@ -123,8 +123,6 @@ jarak = sqrt(jarak)
 
 guidata(hObject, handles); 
 
-
-
 % --- Executes on button press in snapshotButton.
 function snapshotButton_Callback(hObject, eventdata, handles)
 % hObject    handle to snapshotButton (see GCBO)
@@ -164,17 +162,14 @@ handles.vid=vid;
 
 guidata(hObject, handles); 
 
-
-% --- Executes on button press in getDataButton.
 function getDataButton_Callback(hObject, eventdata, handles)
-% hObject    handle to getDataButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 database = @hitungJarak;
 inp = getData(12);
 setappdata(inp, 'x', database); 
 
 
+% dievaluasi dari file getData.m untuk memasukkan data ke table yang
+% diinput secara manual 
 function hitungJarak(varargin)
 global table; 
 global M ;
