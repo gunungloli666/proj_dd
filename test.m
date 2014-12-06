@@ -9,7 +9,8 @@ end
 % C{2}
 % C{3}
 %%
-fid = fopen('./database/data.txt','a'); 
+CC = {1,2,3,4};
+fid = fopen('./database/1.txt','a'); 
 m =  [num2str(2), 'mop','234']; 
-fprintf(fid, '%s\n', m); 
+fprintf(fid, '%s\n', C); 
 fclose(fid); 

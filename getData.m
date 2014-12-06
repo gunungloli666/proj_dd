@@ -41,6 +41,8 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
+
+handles.varargin = varargin; 
 % End initialization code - DO NOT EDIT
 
 
@@ -237,18 +239,26 @@ end
 
 % asm * 2 
 
-varargin.asm = asm; 
-varargin.nama_kain = nama_kain; 
-varargin.kontras = kontras; 
-varargin.korelasi = korelasi; 
-varargin.entropi = entropi; 
-varargin.idm = idm; 
+C.asm = asm; 
+C.nama_kain = nama_kain; 
+C.kontras = kontras; 
+C.korelasi = korelasi; 
+C.entropi = entropi; 
+C.idm = idm; 
 
 D = {nama_kain, num2str(asm), num2str(kontras), num2str(idm ) , num2str(entropi),...
     num2str(korelasi)};
 
-feval(varargin{1}); 
+% varargin = handles.varargin; 
+% 
+% disp(varargin{1}); 
+
+m = getappdata(gcf, 'x'); 
+feval(m, D); 
+
 
 close(gcf); 
+
+% guidata(hObject, handles); 
 
 

@@ -53,6 +53,9 @@ function showDatabase_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to showDatabase (see VARARGIN)
 
 % Choose default command line output for showDatabase
+% 
+global table; 
+global M; 
 handles.output = hObject;
 
 % Update handles structure
@@ -69,6 +72,8 @@ clc;
 fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
 fclose(fid);
+
+
 M = {};
 data = {}; 
 for i=1:numel(C{1})
@@ -78,6 +83,8 @@ for i=1:numel(C{1})
         str2double(C{3}{i}), str2double(C{4}{i}), str2double(C{5}{i}), str2double(C{6}{i})});
 end
 set(table, 'data', M); 
+
+handles.M = M; 
 
 guidata(hObject, handles);
 
@@ -164,15 +171,22 @@ function getDataButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 database = @hitungJarak;
-% M = getData(database); 
-tes(database); 
-
-function tes(varargin)
-feval(varargin{1}, 34);
+inp = getData(12);
+setappdata(inp, 'x', database); 
 
 
 function hitungJarak(varargin)
-disp('mamat');
-disp(varargin{1});  
+global table; 
+global M ;
+M = cat(1, M, varargin{1}); 
+set(table, 'data', M );  
+
+m = [varargin{1}{1},'|',  varargin{1}{2},'|', varargin{1}{3},'|',...
+    varargin{1}{4},'|', varargin{1}{5}, '|' , ... 
+    varargin{1}{6} ];  
+
+fid = fopen('./database/data.txt','a');
+fprintf(fid, '%s\n', m); 
+fclose(fid);
 
 
