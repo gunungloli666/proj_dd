@@ -9,8 +9,13 @@ end
 % C{2}
 % C{3}
 %%
-CC = {1,2,3,4};
 fid = fopen('./database/1.txt','a'); 
 m =  [num2str(2), 'mop','234']; 
 fprintf(fid, '%s\n', C); 
 fclose(fid); 
+
+%%
+A = {'main', 'data'};
+B = {{4,3},3}; 
+M = containers.Map(A,B); 
+M('main')

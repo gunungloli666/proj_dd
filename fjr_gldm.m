@@ -68,12 +68,12 @@ handles.output = hObject;
 % Update handles structure
 
 handles.rekam = 0; 
-
-global patokan; 
-
-handles.patok = patokan;
-
-handles.patok
+% 
+% global patokan; 
+% 
+% handles.patok = patokan;
+% 
+% handles.patok
 
 % handles.database = {}; 
 
@@ -91,7 +91,7 @@ handles.patok
 % 
 % handles.database = D;
 
-handles.database = openData(); 
+[handles.database, handles.map ]=  openData(); 
 
 guidata(hObject, handles);
 
@@ -287,20 +287,11 @@ set(handles.ketIdm , 'string' , idm);
 set(handles.ketEntropi , 'string' , entropi); 
 set(handles.ketKorelasi , 'string' , korelasi); 
 
-global patokan; 
+dataUji = {asm_rata2, kontras_rata2, idm_rata2 , entropi_rata2, korelasi_rata2}; 
 
-patok = patokan;
-
-patok;
-
-jarak = (asm_rata2 -  patok.asm )^2 + ( kontras_rata2 - patok.kontras)^2 ...
-        + ( idm_rata2 - patok.idm )^2 + (entropi_rata2 - patok.entropi)^2 ... 
-        + (korelasi_rata2 - patok.korelasi)^2 ; 
-    
-jarak = sqrt(jarak ); 
+m = cekCocok(handles.database, dataUji); 
 
 guidata(hObject, handles);
-
 
 % --- Executes on button press in kameraButton.
 function kameraButton_Callback(hObject, eventdata, handles)
@@ -363,18 +354,57 @@ set(handles.tableData, 'data', m);
 guidata(hObject, handles );
 
 
-function D = openData(varargin)
+
+% untuk load data dari database
+function [D,F ] = openData(varargin)
 fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
 fclose(fid);
-
 D = {} ; 
-for i=1:numel(C)
+mapAsm = {};
+mapKontras = {}; 
+mapIdm = {} ;
+mapEntropi = {}; 
+mapKorelasi = {};
+
+nama = {}; 
+for i=1:numel(C{1})
     temp = {str2double(C{2}{i}), str2double(C{3}{i}), str2double(C{4}{i}), ...
-        str2double(C{5}{i}) , str2double(C{6}{i})};
+        str2double(C{5}{i}) , str2double(C{6}{i}), C{1}{i}};
     D = cat(1,D, temp);  
+    mapAsm = cat(2, mapAsm , C{2}{i});
+    mapKontras = cat(2, mapKontras , C{3}{i});
+    mapIdm = cat(2, mapIdm , C{4}{i}); 
+    mapEntropi = cat(2, mapEntropi , C{5}{i});
+    mapKorelasi = cat(2, mapKorelasi , C{6}{i});
+    nama = cat(2, nama , C{1}{i}); 
 end
 
+F.mapAsm = containers.Map(nama, mapAsm);
+F.mapIdm = containers.Map(nama,mapIdm); 
+F.mapKontras = containers.Map(nama, mapKontras); 
+F.mapKorelasi = containers.Map(nama, mapKorelasi); 
+F.mapEntropi = containers.Map(nama, mapEntropi); 
 
+% nama
+% D
 
+% cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
+% atau keluarkan jarak paling terkecil dari semua database
+function m =  cekCocok(varargin)
+database = varargin{1}; 
+dataUji = varargin{2}; 
 
+jarakMin = 100000; % semaksimu  mungkin 
+for i=1:numel(database)
+    jarak = (database{i}{1}- dataUji{1})^2 + (database{i}{2} - dataUji{2})^2 ...
+        + (database{i}{3} - dataUji{3})^2 + (database{i}{4}- dataUji{4})^2 ... 
+        + (database{i}{5} - dataUji{5})^2;
+    jarak = sqrt(jarak);
+    if jarak < jarakmin
+        jarakMin = jarak; 
+        key = database{i}{1}; 
+    end
+end
+key
+% data = handles.map(key) 
