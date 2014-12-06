@@ -55,11 +55,17 @@ function main_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for main
 handles.output = hObject;
 
-% Update handles structure
-guidata(hObject, handles);
+clc; 
 
-% UIWAIT makes main wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+global patokan; 
+
+patokan.asm = 0.0070; 
+patokan.kontras =  3.9356; 
+patokan.idm =  0.5525; 
+patokan.entropi = 5.5176;
+patokan.korelasi = 0.0094 ; 
+
+guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -94,3 +100,5 @@ function viewDatabaseButton_Callback(hObject, eventdata, handles)
 % hObject    handle to viewDatabaseButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+showDatabase(); 

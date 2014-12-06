@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 28-Nov-2014 03:01:42
+% Last Modified by GUIDE v2.5 03-Dec-2014 19:49:00
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -59,15 +59,29 @@ function fjr_gldm_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to fjr_gldm (see VARARGIN)
 
 % Choose default command line output for fjr_gldm
-handles.output = hObject;
-% Update handles structure
-guidata(hObject, handles);
 
 clc;
-clear all;
+% clear all;
 
 
-hanldes.rekam = 0; 
+handles.output = hObject;
+% Update handles structure
+
+handles.rekam = 0; 
+
+
+global patokan; 
+
+handles.patok = patokan;
+
+handles.patok
+
+% handles.patokan = patokan; 
+
+guidata(hObject, handles);
+
+
+
 
 
 
@@ -186,38 +200,38 @@ delta = floor(min(tinggi, lebar)/ 60);
 % disp(['nilai lebar = ' , num2str(lebar)]);
 % disp(['nilai delta = ', num2str(delta)]); 
 % hitung matriks gray level
-D = zeros(tinggi, lebar); 
-step = floor(tinggi/20); 
-for i=1:tinggi, 
-    if mod(i, step) == 0
-        persen =ceil( i/tinggi * 100); 
-        set(handles.ketProgress, 'string', num2str(persen));  
-         drawnow; 
-   end
-    for j=1:lebar
-        rata2 = 0; 
-        for x = i-delta:i+delta
-            for y = j-delta:j+delta
-                if (x <= tinggi ) && ( x >= 1) && ... 
-                        (y <= lebar ) && (y >= 1)
-                    rata2 = rata2 + m(x,y);
-%                      drawnow; 
-                end
-            end
-        end
-        rata2 = rata2/((2*delta)*(2*delta)); 
-        D(i,j)= abs(m(i,j) - rata2);
-    end
-end
-
-% mean
-mu = sum(sum(D(:,:))); 
-mu = mu/(lebar * tinggi); 
-
-% sd
-sd = sum(sum((D(:,:)- mu).^2)); 
-sd = sd/(tinggi * lebar);
-sd = sqrt(sd);
+% D = zeros(tinggi, lebar); 
+% step = floor(tinggi/20); 
+% for i=1:tinggi, 
+%     if mod(i, step) == 0
+%         persen =ceil( i/tinggi * 100); 
+%         set(handles.ketProgress, 'string', num2str(persen));  
+%          drawnow; 
+%    end
+%     for j=1:lebar
+%         rata2 = 0; 
+%         for x = i-delta:i+delta
+%             for y = j-delta:j+delta
+%                 if (x <= tinggi ) && ( x >= 1) && ... 
+%                         (y <= lebar ) && (y >= 1)
+%                     rata2 = rata2 + m(x,y);
+% %                      drawnow; 
+%                 end
+%             end
+%         end
+%         rata2 = rata2/((2*delta)*(2*delta)); 
+%         D(i,j)= abs(m(i,j) - rata2);
+%     end
+% end
+% 
+% % mean
+% mu = sum(sum(D(:,:))); 
+% mu = mu/(lebar * tinggi); 
+% 
+% % sd
+% sd = sum(sum((D(:,:)- mu).^2)); 
+% sd = sd/(tinggi * lebar);
+% sd = sqrt(sd);
 
 % ini properti-properti yang diperoleh dari metode GLCM
 
@@ -230,24 +244,45 @@ energi_ = struct2array(energi);
 homogeiniti = graycoprops(GLCM,{'homogeneity'});
 homogeiniti_= struct2array(homogeiniti);
 
-disp(energi);
-disp(energi_); 
+% disp(energi);
+% disp(energi_); 
 
 % C10=[intensitas_10, rata2_10, entropi_10, energi_10, homogeiniti_10]' %Matriks C10
-set(handles.ketIntensitas,'string', num2str(intensitas)); 
-set(handles.ketRata2 , 'string', num2str(rata2)); 
-set(handles.ketEntropi , 'string',  num2str(entropi)); 
+% set(handles.ketIntensitas,'string', num2str(intensitas)); 
+% set(handles.ketRata2 , 'string', num2str(rata2)); 
+% set(handles.ketEntropi , 'string',  num2str(entropi)); 
 
-set(handles.ketMean, 'string', num2str(mu)); 
-set(handles.ketSD , 'string', num2str(sd)); 
-set(handles.ketFinish , 'string', 'FINISH'); 
+% set(handles.ketAsm, 'string', num2str(mu)); 
+% set(handles.ketKontras , 'string', num2str(sd)); 
+% set(handles.ketFinish , 'string', 'FINISH'); 
 
 [A,B,C,D] = glcm(m);  
 
-A
-B
-C
-D
+asm_rata2 = ( A.asm + B.asm + C.asm + D.asm )/ 4;
+kontras_rata2 = (A.kontras + B.kontras + C.kontras + D.kontras )/ 4 ;
+idm_rata2 = (A.idm + B.idm + C.idm + D.idm )/4; 
+entropi_rata2 = (A.entropi + B.entropi + C.entropi + D.entropi)/4  ; 
+korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4 ; 
+
+set(handles.ketAsm, 'string' , num2str(asm_rata2)); 
+set(handles.ketKontras , 'string' , num2str(kontras_rata2)); 
+set(handles.ketIdm , 'string' , num2str(idm_rata2)); 
+set(handles.ketEntropi , 'string' , num2str(entropi_rata2)); 
+set(handles.ketKorelasi , 'string' , num2str(korelasi_rata2)); 
+
+
+
+global patokan; 
+
+patok = patokan;
+
+patok;
+
+jarak = (asm_rata2 -  patok.asm )^2 + ( kontras_rata2 - patok.kontras)^2 ...
+        + ( idm_rata2 - patok.idm )^2 + (entropi_rata2 - patok.entropi)^2 ... 
+        + (korelasi_rata2 - patok.korelasi)^2 ; 
+    
+jarak = sqrt(jarak ); 
 
 guidata(hObject, handles);
 
