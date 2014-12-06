@@ -403,6 +403,7 @@ F.mapKontras = containers.Map(nama, mapKontras);
 F.mapKorelasi = containers.Map(nama, mapKorelasi); 
 F.mapEntropi = containers.Map(nama, mapEntropi); 
 
+% F.mapEntropi.keys
 % cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
 % atau keluarkan jarak paling terkecil dari semua database
 function m =  cekCocok(varargin)
@@ -416,10 +417,10 @@ for i=1:a
     jarak = ( database{i,1}- dataUji{1})^2 + (database{i,2} - dataUji{2})^2 ...
         + (database{i,3} - dataUji{3})^2 + (database{i,4}- dataUji{4})^2 ... 
         + (database{i,5} - dataUji{5})^2;
-    jarak = sqrt(jarak);
+    jarak = sqrt(jarak)
     if jarak < jarakMin
         jarakMin = jarak; 
-        key = database{i,6}; 
+        key = database{i,6}
     end
 end
 
