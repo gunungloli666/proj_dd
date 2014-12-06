@@ -22,7 +22,7 @@ function varargout = fjr_gldm(varargin)
 
 % Edit the above text to modify the response to help fjr_gldm
 
-% Last Modified by GUIDE v2.5 03-Dec-2014 19:49:00
+% Last Modified by GUIDE v2.5 06-Dec-2014 18:17:45
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -91,7 +91,8 @@ handles.rekam = 0;
 % 
 % handles.database = D;
 
-[handles.database, handles.map ]=  openData(); 
+global map; 
+[handles.database, map ]=  openData(); 
 
 guidata(hObject, handles);
 
@@ -277,7 +278,7 @@ korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4 ;
 
 asm = num2str(asm_rata2); 
 kontras = num2str(kontras_rata2); 
-idm = num2str(idm_rat2); 
+idm = num2str(idm_rata2); 
 entropi = num2str(entropi_rata2); 
 korelasi = num2str(korelasi_rata2); 
 
@@ -290,6 +291,21 @@ set(handles.ketKorelasi , 'string' , korelasi);
 dataUji = {asm_rata2, kontras_rata2, idm_rata2 , entropi_rata2, korelasi_rata2}; 
 
 m = cekCocok(handles.database, dataUji); 
+
+set(handles.namaKain, 'string', num2str(m.nama) );
+set(handles.hasilAsm, 'string', num2str(m.asm));
+set(handles.hasilKontras, 'string', num2str(m.kontras)); 
+set(handles.hasilIdm, 'string', num2str(m.idm));
+set(handles.hasilEntropi, 'string', num2str(m.entropi)); 
+set(handles.hasilKorelasi, 'string', num2str(m.korelasi)); 
+
+ set(handles.hasilJarak, 'string', num2str(m.jarak)); 
+if m.jarak < 15 
+    set(handles.hasilKeterangan, 'string', 'COCOK'); 
+   
+else 
+    set(handles.hasilKeterangan, 'string', 'MENDEKATI'); 
+end
 
 guidata(hObject, handles);
 
@@ -356,6 +372,7 @@ guidata(hObject, handles );
 
 
 % untuk load data dari database
+% sekalian map property-propertinya.... 
 function [D,F ] = openData(varargin)
 fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
@@ -386,25 +403,32 @@ F.mapKontras = containers.Map(nama, mapKontras);
 F.mapKorelasi = containers.Map(nama, mapKorelasi); 
 F.mapEntropi = containers.Map(nama, mapEntropi); 
 
-% nama
-% D
-
 % cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
 % atau keluarkan jarak paling terkecil dari semua database
 function m =  cekCocok(varargin)
-database = varargin{1}; 
-dataUji = varargin{2}; 
+database = varargin{1};
+dataUji = varargin{2} ;
 
-jarakMin = 100000; % semaksimu  mungkin 
-for i=1:numel(database)
-    jarak = (database{i}{1}- dataUji{1})^2 + (database{i}{2} - dataUji{2})^2 ...
-        + (database{i}{3} - dataUji{3})^2 + (database{i}{4}- dataUji{4})^2 ... 
-        + (database{i}{5} - dataUji{5})^2;
+a = size(database); 
+jarakMin = 10000000; % semaksimum  mungkin 
+% database{3,1}
+for i=1:a
+    jarak = ( database{i,1}- dataUji{1})^2 + (database{i,2} - dataUji{2})^2 ...
+        + (database{i,3} - dataUji{3})^2 + (database{i,4}- dataUji{4})^2 ... 
+        + (database{i,5} - dataUji{5})^2;
     jarak = sqrt(jarak);
-    if jarak < jarakmin
+    if jarak < jarakMin
         jarakMin = jarak; 
-        key = database{i}{1}; 
+        key = database{i,6}; 
     end
 end
-key
-% data = handles.map(key) 
+
+global map;
+m.nama = key; 
+m.asm = map.mapAsm(key);
+m.idm = map.mapIdm(key);
+m.kontras = map.mapKontras(key); 
+m.entropi = map.mapEntropi(key);
+m.korelasi = map.mapKorelasi(key); 
+
+m.jarak = jarakMin ;

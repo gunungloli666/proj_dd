@@ -3,9 +3,11 @@ clear all;
 fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s',  'Delimiter','|');
 fclose(fid);
+numel(C{1})
 for i=1:numel(C{1}) 
-    C{1}(i) 
+    C{1}{i}
 end 
+C
 % C{2}
 % C{3}
 %%
