@@ -120,7 +120,7 @@ guidata(hObject,handles);
 % sekalian map property-propertinya.... 
 function [D,F ] = openData(varargin)
 fid = fopen('./database/data.txt','r');
-C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
+C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');% 
 fclose(fid);
 c = size(C);
 col = c(2); 
