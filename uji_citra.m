@@ -50,8 +50,9 @@ clc;
 handles.output = hObject;
 handles.rekam = 0; 
 
-global map; 
-[handles.database, map ]=  openData(); 
+% global map; 
+% map = {}; 
+[handles.database, handles.map ]=  openData(); 
 
 guidata(hObject, handles);
 
@@ -161,7 +162,6 @@ set(handles.hasilKorelasi, 'string', num2str(m.korelasi));
  set(handles.hasilJarak, 'string', num2str(m.jarak)); 
 if m.jarak < 25
     set(handles.hasilKeterangan, 'string', 'COCOK'); 
-   
 else 
     set(handles.hasilKeterangan, 'string', 'MENDEKATI'); 
 end
@@ -184,15 +184,14 @@ end
 handles.vid=vid;
 guidata(hObject,handles);
 
+% ambil snapshot dari video preview
 function snapshotButton_Callback(hObject, eventdata, handles)
 if ~isfield(handles, 'video')
     return; 
 end
-
 snapshot = getsnapshot(handles.video); 
 handles.image = snapshot; 
 imshow(handles.image, 'parent', handles.axesSnapshot); 
-
 guidata(hObject,handles);
 
 
@@ -203,30 +202,19 @@ fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
 fclose(fid);
 D = {} ; 
-mapAsm = {};
-mapKontras = {}; 
-mapIdm = {} ;
-mapEntropi = {}; 
-mapKorelasi = {};
-
 nama = {}; 
 for i=1:numel(C{1})
-    temp = {str2double(C{2}{i}), str2double(C{3}{i}), str2double(C{4}{i}), ...
-        str2double(C{5}{i}) , str2double(C{6}{i}), C{1}{i}};
+    temp = {}; 
+    temp = cat(2, temp, C{1}{i}); % nama
+    for j=2:numel(C) % variabel-variabel yang lain
+        temp = cat(2, temp, str2double(C{j}{i})); 
+    end
     D = cat(1,D, temp);  
-    mapAsm = cat(2, mapAsm , C{2}{i});
-    mapKontras = cat(2, mapKontras , C{3}{i});
-    mapIdm = cat(2, mapIdm , C{4}{i}); 
-    mapEntropi = cat(2, mapEntropi , C{5}{i});
-    mapKorelasi = cat(2, mapKorelasi , C{6}{i});
-    nama = cat(2, nama , C{1}{i}); 
+    nama = cat(1, nama , C{1}{i}); 
 end
-
-F.mapAsm = containers.Map(nama, mapAsm);
-F.mapIdm = containers.Map(nama,mapIdm); 
-F.mapKontras = containers.Map(nama, mapKontras); 
-F.mapKorelasi = containers.Map(nama, mapKorelasi); 
-F.mapEntropi = containers.Map(nama, mapEntropi); 
+D
+% F = containers.Map(nama, D); 
+F = 0 ;
 
 % F.mapEntropi.keys
 % cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
