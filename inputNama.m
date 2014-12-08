@@ -124,10 +124,13 @@ function okButton_Callback(hObject, eventdata, handles)
 % hObject    handle to okButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-fungsi = getappdata(gcf, 'fungsiInput'); 
+fungsiInput = getappdata(gcf, 'fungsiInput'); 
+dataTable = getappdata(gcf, 'dataTable'); 
+dataInput = getappdata(gcf, 'dataInput') ; 
+table = getappdata(gcf, 'table'); 
 
 str = get(handles.inputNama, 'string'); 
-feval(fungsi, str); 
+feval(fungsiInput, table , dataTable , dataInput , str); 
 
 close(gcf);
 

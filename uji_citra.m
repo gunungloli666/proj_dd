@@ -22,7 +22,7 @@ function varargout = uji_citra(varargin)
 
 % Edit the above text to modify the response to help uji_citra
 
-% Last Modified by GUIDE v2.5 08-Dec-2014 17:03:53
+% Last Modified by GUIDE v2.5 08-Dec-2014 17:24:58
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -45,10 +45,7 @@ else
 end
 
 function uji_citra_OpeningFcn(hObject, eventdata, handles, varargin)
-clc;
-
 handles.output = hObject;
-handles.rekam = 0; 
 
 [handles.database, handles.map ]=  openData(); 
 
@@ -115,32 +112,7 @@ handles.image = snapshot;
 imshow(handles.image, 'parent', handles.axesSnapshot); 
 guidata(hObject,handles);
 
-
-% untuk load data dari database
-% sekalian map property-propertinya.... 
-function [D,F ] = openData(varargin)
-fid = fopen('./database/data.txt','r');
-C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');% 
-fclose(fid);
-c = size(C);
-col = c(2); 
-b = numel(C{1});
-D = cell(b,1); 
-nama = cell(b,1); 
-for i=1:b
-    temp = cell(col,1); 
-    temp{1}= C{1}{i}; % nama
-    for j=2:col % variabel-variabel yang lain
-        temp{j} =  str2double(C{j}{i}); 
-    end
-    D{i} = temp;  
-    nama{i}= C{1}{i}; 
-end
-F = containers.Map(nama, D);
-
-% F.mapEntropi.keys
-% cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
-% atau keluarkan jarak paling terkecil dari semua database
+% cek dari database mana nama yang cocok... 
 function [key, jarakMin ]  =  cekCocok(varargin)
 database = varargin{1};
 dataUji = varargin{2} ;
@@ -157,3 +129,4 @@ for i=1:a(1)
         key = database{i,1};
     end
 end
+
