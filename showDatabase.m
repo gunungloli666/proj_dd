@@ -144,6 +144,7 @@ imshow(handles.image, 'parent', handles.axesSnapshot);
 % hitung GLCM
 guidata(hObject, handles); 
 
+% ini untuk mengaktifkan kamera... 
 % --- Executes on button press in kameraButton.
 function kameraButton_Callback(hObject, eventdata, handles)
 % hObject    handle to kameraButton (see GCBO)
@@ -191,15 +192,27 @@ fprintf(fid, '%s\n', m);
 fclose(fid);
 
 
+% dipanggil untuk mengevaluasi data masukkan yang diambil secara langsung
+% menggunakan Kamera. Jadi data pada tabel dan file database di tambahkan
+% ditambahkan dengan bantuan fungsi ini... 
 function hasilInputNama(varargin) 
 global table; 
 global dataTable; 
 global M; 
 
-C = {varargin{1}, dataTable.asm, dataTable.kontras, dataTable.idm, dataTable.entropi... 
+C = {varargin{1}, dataTable.asm, dataTable.kontras, dataTable.idm, dataTable.entropi, ... 
     dataTable.korelasi}; 
 
 M = cat(1,M,C); 
 % data = get(table, 'data'); 
 
 set(table, 'data', M );  
+
+
+m = [varargin{1},'|',  dataTable.asm,'|', dataTable.kontras ,'|',...
+    dataTable.idm ,'|',dataTable.entropi, '|' , ... 
+    dataTable.korelasi ];  
+
+fid = fopen('./database/data.txt','a');
+fprintf(fid, '%s\n', m); 
+fclose(fid);

@@ -22,7 +22,7 @@ function varargout = main(varargin)
 
 % Edit the above text to modify the response to help main
 
-% Last Modified by GUIDE v2.5 06-Dec-2014 19:00:44
+% Last Modified by GUIDE v2.5 06-Dec-2014 21:34:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,14 +57,6 @@ handles.output = hObject;
 
 clc; 
 
-global patokan; 
-
-patokan.asm = 0.0070; 
-patokan.kontras =  3.9356; 
-patokan.idm =  0.5525; 
-patokan.entropi = 5.5176;
-patokan.korelasi = 0.0094 ; 
-
 guidata(hObject, handles);
 
 
@@ -79,15 +71,17 @@ function varargout = main_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in snapshotButton.
-function snapshotButton_Callback(hObject, eventdata, handles)
-% hObject    handle to snapshotButton (see GCBO)
+
+% dipanggil ketika menekan tombol  uji citra
+% --- Executes on button press in ujiCitraButton.
+function ujiCitraButton_Callback(hObject, eventdata, handles)
+% hObject    handle to ujiCitraButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)\
 
-fjr_gldm(); 
+uji_citra(); 
 
-
+% dipanggil ketika menekan tombol about
 % --- Executes on button press in aboutButton.
 function aboutButton_Callback(hObject, eventdata, handles)
 % hObject    handle to aboutButton (see GCBO)
@@ -95,6 +89,8 @@ function aboutButton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 about(); 
 
+
+% dipanggil ketika menekan tombol database
 % --- Executes on button press in viewDatabaseButton.
 function viewDatabaseButton_Callback(hObject, eventdata, handles)
 % hObject    handle to viewDatabaseButton (see GCBO)
