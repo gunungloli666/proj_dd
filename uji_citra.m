@@ -22,7 +22,7 @@ function varargout = uji_citra(varargin)
 
 % Edit the above text to modify the response to help uji_citra
 
-% Last Modified by GUIDE v2.5 07-Dec-2014 17:08:46
+% Last Modified by GUIDE v2.5 08-Dec-2014 17:03:53
 
 % Begin initialization code - DO NOT EDIT
 % clear all; 
@@ -50,8 +50,6 @@ clc;
 handles.output = hObject;
 handles.rekam = 0; 
 
-% global map; 
-% map = {}; 
 [handles.database, handles.map ]=  openData(); 
 
 guidata(hObject, handles);
@@ -59,17 +57,6 @@ guidata(hObject, handles);
 
 function varargout = uji_citra_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
-
-
-function startGldmButton_Callback(hObject, eventdata, handles)
-try 
-x = handles.x;
-y = handles.y;
-catch ME
-    return; 
-end 
-hanldes.plot1 = plot(handles.axesImage, x, y ); 
-
 
 % --- Executes on button press in calculateButton.
 function calculateButton_Callback(hObject, eventdata, handles)
@@ -79,20 +66,7 @@ m.y = sin(m.x);
 
 guidata(hObject,m ); 
 
-function openButton_Callback(hObject, eventdata, handles)
-try
-    fileName = uigetfile({'*.jpg;' }, 'Pilih File');  
-    I = imread(fileName); 
-    handles.image = I; 
-    set(hObject , 'Tag', 'fajarImage'); 
-catch ME 
-    disp('error in load file');
-    report = getReport(ME); 
-    disp(report); 
-    return; 
-end
 
-guidata(hObject, handles);
 
 % --- Executes on button press in hitungButton.
 function hitungButton_Callback(hObject, eventdata, handles)
@@ -101,70 +75,17 @@ if ~isfield(handles, 'image')
 end
 image = handles.image; 
 
-[tinggi, lebar] = size(image);
-ukuran = min(tinggi, lebar); 
-
 m = rgb2gray(image);
 
 imshow(m,'parent', handles.axesSnapshot); 
 
-% GLDM
-[tinggi, lebar] = size(m);
+all = glcm(m);  % hitung properti GLCM semua sudut
 
-tinggi = floor(tinggi/2); 
-lebar = floor(lebar/2); 
+[key, jarak ]= cekCocok(handles.database, all); 
 
-handles.tinggi = tinggi; 
-handles.lebar = lebar; 
+set(handles.ketNamaKain, 'string', key); 
 
-delta = floor(min(tinggi, lebar)/ 60);
-
-intensitas = std2(m);
-rata2 = mean2(m);
-entropi = entropy(m);
-GLCM = graycomatrix(m); %menghitung GLCM
-energi = graycoprops(GLCM,{'energy'}); 
-energi_ = struct2array(energi);
-homogeiniti = graycoprops(GLCM,{'homogeneity'});
-homogeiniti_= struct2array(homogeiniti);
-
-[A,B,C,D] = glcm(m);  
-
-asm_rata2 = ( A.asm + B.asm + C.asm + D.asm )/ 4;
-kontras_rata2 = (A.kontras + B.kontras + C.kontras + D.kontras )/ 4 ;
-idm_rata2 = (A.idm + B.idm + C.idm + D.idm )/4; 
-entropi_rata2 = (A.entropi + B.entropi + C.entropi + D.entropi)/4  ; 
-korelasi_rata2 = (A.korelasi + B.korelasi + C.korelasi + D.korelasi)/ 4 ; 
-
-asm = num2str(asm_rata2); 
-kontras = num2str(kontras_rata2); 
-idm = num2str(idm_rata2); 
-entropi = num2str(entropi_rata2); 
-korelasi = num2str(korelasi_rata2); 
-
-set(handles.ketAsm, 'string' , asm); 
-set(handles.ketKontras ,'string', kontras); 
-set(handles.ketIdm , 'string' , idm); 
-set(handles.ketEntropi , 'string' , entropi); 
-set(handles.ketKorelasi , 'string' , korelasi); 
-
-dataUji = {asm_rata2, kontras_rata2, idm_rata2 , entropi_rata2, korelasi_rata2}; 
-
-m = cekCocok(handles.database, dataUji); 
-
-set(handles.namaKain, 'string', num2str(m.nama) );
-set(handles.hasilAsm, 'string', num2str(m.asm));
-set(handles.hasilKontras, 'string', num2str(m.kontras)); 
-set(handles.hasilIdm, 'string', num2str(m.idm));
-set(handles.hasilEntropi, 'string', num2str(m.entropi)); 
-set(handles.hasilKorelasi, 'string', num2str(m.korelasi)); 
-
- set(handles.hasilJarak, 'string', num2str(m.jarak)); 
-if m.jarak < 25
-    set(handles.hasilKeterangan, 'string', 'COCOK'); 
-else 
-    set(handles.hasilKeterangan, 'string', 'MENDEKATI'); 
-end
+set(handles.ketJarak , 'string', jarak  ); 
 
 guidata(hObject, handles);
 
@@ -201,49 +122,38 @@ function [D,F ] = openData(varargin)
 fid = fopen('./database/data.txt','r');
 C = textscan(fid, '%s %s %s %s %s %s',  'Delimiter','|');
 fclose(fid);
-D = {} ; 
-nama = {}; 
-for i=1:numel(C{1})
-    temp = {}; 
-    temp = cat(2, temp, C{1}{i}); % nama
-    for j=2:numel(C) % variabel-variabel yang lain
-        temp = cat(2, temp, str2double(C{j}{i})); 
+c = size(C);
+col = c(2); 
+b = numel(C{1});
+D = cell(b,1); 
+nama = cell(b,1); 
+for i=1:b
+    temp = cell(col,1); 
+    temp{1}= C{1}{i}; % nama
+    for j=2:col % variabel-variabel yang lain
+        temp{j} =  str2double(C{j}{i}); 
     end
-    D = cat(1,D, temp);  
-    nama = cat(1, nama , C{1}{i}); 
+    D{i} = temp;  
+    nama{i}= C{1}{i}; 
 end
-D
-% F = containers.Map(nama, D); 
-F = 0 ;
+F = containers.Map(nama, D);
 
 % F.mapEntropi.keys
 % cek cocok... jika kembali berarti cocok... jika 0 berarti tidak 
 % atau keluarkan jarak paling terkecil dari semua database
-function m =  cekCocok(varargin)
+function [key, jarakMin ]  =  cekCocok(varargin)
 database = varargin{1};
 dataUji = varargin{2} ;
-
 a = size(database); 
 jarakMin = 10000000; % semaksimum  mungkin 
-
-for i=1:a
-    jarak = ( database{i,1}- dataUji{1})^2 + (database{i,2} - dataUji{2})^2 ...
-        + (database{i,3} - dataUji{3})^2 + (database{i,4}- dataUji{4})^2 ... 
-        + (database{i,5} - dataUji{5})^2;
+for i=1:a(1)
+    jarak = 0; 
+    for j=2:a(2)
+        jarak = jarak + (database{i}{j} - dataUji{i}); 
+    end
     jarak = sqrt(jarak);
     if jarak < jarakMin
         jarakMin = jarak; 
-        key = database{i,6};
+        key = database{i,1};
     end
 end
-
-global map;
-
-m.nama = key; 
-m.asm = map.mapAsm(key);
-m.idm = map.mapIdm(key);
-m.kontras = map.mapKontras(key); 
-m.entropi = map.mapEntropi(key);
-m.korelasi = map.mapKorelasi(key); 
-
-m.jarak = jarakMin ;

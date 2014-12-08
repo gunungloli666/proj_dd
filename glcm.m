@@ -1,4 +1,4 @@
-function [G0, G45, G90, G135] = glcm(F)
+function [all] = glcm(F)
 % GLCM Menghasilkan fitur GLCM.
 %     Masukan:  F = Citra berskala keabuan
 %     Keluaran: Fitur = fitur GLCM untuk beberapa sudut.
@@ -210,28 +210,52 @@ for a = 0 : 255
                        GLCM135 (a+1, b+1)/(stdevx135 * stdevy135)) ;
     end
 end
-    
+   
+all =  cell(20,1); 
 G0.asm = asm0;
 G0.kontras = kontras0;
 G0.idm = idm0;
 G0.entropi = entropi0;
 G0.korelasi = korelasi0;
+
+all{1} = G0.asm; 
+all{2} = G0.kontras; 
+all{3} = G0.idm; 
+all{4} = G0.entropi; 
+all{5} = G0.korelasi;
     
 G45.asm = asm45;
 G45.kontras = kontras45;
 G45.idm = idm45;
 G45.entropi = entropi45;
 G45.korelasi = korelasi45;
-    
+
+all{6} = G45.asm; 
+all{7} = G45.kontras; 
+all{8} = G45.idm; 
+all{9} = G45.entropi; 
+all{10} = G45.korelasi;
+
 G90.asm = asm90;
 G90.kontras = kontras90;
 G90.idm = idm90;
 G90.entropi = entropi90;
 G90.korelasi = korelasi90;
-    
+
+all{11} = G90.asm; 
+all{12} = G90.kontras; 
+all{13} = G90.idm; 
+all{14} = G90.entropi; 
+all{15} = G90.korelasi;
+
 G135.asm = asm135;
 G135.kontras = kontras135;
 G135.idm = idm135;
 G135.entropi = entropi135;
 G135.korelasi = korelasi135;
    
+all{16} = G135.asm; 
+all{17} = G135.kontras; 
+all{18} = G135.idm; 
+all{19} = G135.entropi; 
+all{20} = G135.korelasi;
