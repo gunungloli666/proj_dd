@@ -49,6 +49,9 @@ clc;
 
 table = handles.tableGLCM;
 
+
+handles.kosong = false; 
+
 set(table, 'columnName', {'Nama Kain'})
 
 [data,] =  openData(); 
@@ -59,7 +62,7 @@ if s(1) > 1
     set(table, 'data', data ); 
     handles.dataTable = data; 
 else
-    
+    handles.kosong = true; 
 end
 
 guidata(hObject, handles);
@@ -90,8 +93,15 @@ fungsiInput = @hasilInputNama;
 inp = inputNama(); 
 
 setappdata(inp,'fungsiInput', fungsiInput );
-setappdata(inp, 'dataTable', handles.dataTable); 
-setappdata(inp, 'table', handles.tableGLCM); 
+
+if ~ handles.kosong 
+    setappdata(inp, 'dataTable', handles.dataTable); 
+end
+
+setappdata(inp, 'kosong', handles.kosong); 
+
+setappdata(inp, 'table', handles.tableGLCM);
+
 setappdata(inp, 'dataInput', all); 
 
 guidata(hObject, handles); 
@@ -147,21 +157,56 @@ setappdata(inp, 'x', database);
 % ditambahkan dengan bantuan fungsi ini... 
 function hasilInputNama(varargin) 
 table = varargin{1} ; 
-dataTable = varargin{2}; 
-dataInput = varargin{3}; 
-nama = varargin{4}; 
-
-[row,] = size(dataInput);
-row = row(1); 
-dataTemp = cell(1,row + 1);
-for i=2:row +1
-    dataTemp{1,i} = dataInput{i-1}; 
-end
-dataInput{1,1} = nama; 
-
-dataTable 
-dataInput
-
+kosong = varargin{2}; 
+if ~kosong
+    dataTable = varargin{3}; 
+    dataInput = varargin{4}; 
+    nama = varargin{5};     
+    [row,] = size(dataInput);
+    row = row(1); 
+    dataTemp = cell(1,row + 1);
+    for i=2:row +1
+        dataTemp{1,i} = dataInput{i-1}; 
+    end
+    dataTemp{1,1} = nama; 
+    dataTable = cat(1,dataTable, dataTemp);
+    set(table, 'data', dataTable );  
+    
+    
+    m = [dataTemp{1,1}, '|']; 
+    for i=2:row
+        m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
+    end
+    m = cat(2,  m , num2str(dataTemp{row+1})); 
+    
+    fid = fopen('./database/data.txt','a');
+    fprintf(fid, '%s\n', m); 
+    fclose(fid);
+    
+else 
+    dataInput = varargin{3}; 
+    nama = varargin{4}; 
+    [row,] = size(dataInput);
+    row = row(1); 
+    dataTemp = cell(1,row + 1);
+    for i=2:row +1
+        dataTemp{1,i} = dataInput{i-1}; 
+    end
+    
+    dataTemp{1,1} = nama;
+    set(table, 'data', dataTemp);  
+    
+    
+    m = [dataTemp{1,1}, '|']; 
+    for i=2:row
+        m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
+    end
+    m = cat(2,  m , num2str(dataTemp{row+1})); 
+    
+    fid = fopen('./database/data.txt','w');
+    fprintf(fid, '%s\n', m); 
+    fclose(fid);
+end    
 % dataTable = cat(1,dataTable, dataInput);
 
 % data = get(table, 'data'); 
@@ -180,4 +225,4 @@ dataInput
 % end
 % fid = fopen('./database/data.txt','a');
 % fprintf(fid, '%s\n', m); 
-fclose(fid);
+% fclose(fid);

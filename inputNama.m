@@ -129,8 +129,15 @@ dataTable = getappdata(gcf, 'dataTable');
 dataInput = getappdata(gcf, 'dataInput') ; 
 table = getappdata(gcf, 'table'); 
 
+kosong = getappdata(gcf, 'kosong');
+
 str = get(handles.inputNama, 'string'); 
-feval(fungsiInput, table , dataTable , dataInput , str); 
+
+if ~kosong
+    feval(fungsiInput, table ,kosong , dataTable , dataInput , str); 
+else
+    feval(fungsiInput, table , kosong , dataInput , str); 
+end
 
 close(gcf);
 
