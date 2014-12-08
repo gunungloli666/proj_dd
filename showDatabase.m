@@ -106,11 +106,7 @@ setappdata(inp, 'dataInput', all);
 
 guidata(hObject, handles); 
 
-% --- Executes on button press in snapshotButton.
 function snapshotButton_Callback(hObject, eventdata, handles)
-% hObject    handle to snapshotButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 if ~isfield(handles, 'video')
     return; 
 end
@@ -118,19 +114,12 @@ end
 snapshot = getsnapshot(handles.video); 
 handles.image = snapshot; 
 imshow(handles.image, 'parent', handles.axesSnapshot); 
-% hitung GLCM
 guidata(hObject, handles); 
 
 % ini untuk mengaktifkan kamera... 
-% --- Executes on button press in kameraButton.
 function kameraButton_Callback(hObject, eventdata, handles)
-% hObject    handle to kameraButton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 isCamera=get(hObject,'Value'); 
 if isCamera
-%     set(hObject,'String','Stop Camera');
     axes(handles.axesImage);
     vid=videoinput('winvideo','USB Camera','YUY2_640x480');
     set(vid,'ReturnedColorSpace','rgb');
@@ -172,7 +161,6 @@ if ~kosong
     dataTable = cat(1,dataTable, dataTemp);
     set(table, 'data', dataTable );  
     
-    
     m = [dataTemp{1,1}, '|']; 
     for i=2:row
         m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
@@ -196,7 +184,6 @@ else
     dataTemp{1,1} = nama;
     set(table, 'data', dataTemp);  
     
-    
     m = [dataTemp{1,1}, '|']; 
     for i=2:row
         m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
@@ -207,22 +194,3 @@ else
     fprintf(fid, '%s\n', m); 
     fclose(fid);
 end    
-% dataTable = cat(1,dataTable, dataInput);
-
-% data = get(table, 'data'); 
-
-% set(table, 'data', dataTable );  
-
-% m = [varargin{1},'|',  dataTable.asm,'|', dataTable.kontras ,'|',...
-%     dataTable.idm ,'|',dataTable.entropi, '|' , ... 
-%     dataTable.korelasi ];
-
-% m = zeros(1,row(1)*2);  
-% 
-% for i=1:2:row(1)*2
-%     m(i)= num2str(dataInput{i}); 
-%     m(i+1) = '|'; 
-% end
-% fid = fopen('./database/data.txt','a');
-% fprintf(fid, '%s\n', m); 
-% fclose(fid);
