@@ -20,9 +20,6 @@ function uji_citra_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 [handles.database, handles.map ]=  openData(); 
-
-% handles.database
-
 clc;
 
 set(handles.tableJarak, 'columnName', {'Nama Kain', 'Jarak'});
@@ -89,7 +86,6 @@ a = size(database);
 jarakMin = 10000000; % semaksimum  mungkin 
 petaJar2Nam = cell(a(1), 2); 
 
-k = size(dataUji) ; 
 m =  size(database{1}); 
 
 for i=1:a(1)

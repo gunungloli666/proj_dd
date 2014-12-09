@@ -47,8 +47,9 @@ handles.output = hObject;
 
 clc; 
 
-table = handles.tableGLCM;
+% clear all ;
 
+table = handles.tableGLCM;
 
 handles.kosong = false; 
 
@@ -56,8 +57,11 @@ set(table, 'columnName', {'Nama Kain'})
 
 [data,] =  openData(); 
 
-[s,] = size(data); 
-if s(1) > 1 
+s = 0; 
+if numel(data)  > 0
+    s = size(data{1}); 
+end
+if s(1) >= 1 
     data  = convertDataTable(data); 
     set(table, 'data', data ); 
     handles.dataTable = data; 
@@ -147,8 +151,9 @@ setappdata(inp, 'x', database);
 function hasilInputNama(varargin) 
 table = varargin{1} ; 
 kosong = varargin{2}; 
+% kosong = get(table,'kosong'); 
 if ~kosong
-    dataTable = varargin{3}; 
+    dataTable = get(table,'data'); 
     dataInput = varargin{4}; 
     nama = varargin{5};     
     [row,] = size(dataInput);
@@ -182,16 +187,38 @@ else
     end
     
     dataTemp{1,1} = nama;
-    set(table, 'data', dataTemp);  
+    d = get(table, 'data' );
+    aa = size(dataTemp);
+    bb = size(d); 
     
-    m = [dataTemp{1,1}, '|']; 
-    for i=2:row
-        m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
+    if aa(2) == bb(2)
+        d = cat(1,d, dataTemp); 
+        set(table, 'data', d); 
+        mm = []; 
+        for ii=1:bb(1)
+            m = [dataTemp{1,1}, '|']; 
+            for i=2:row
+                m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
+            end
+            m = cat(2,  m , num2str(dataTemp{row+1})); 
+            mm = cat (1,mm, m); 
+        end
+        
+        fid = fopen('./database/data.txt','a');
+        fprintf(fid, '%s\n', mm); 
+        fclose(fid);
+    else
+        set(table, 'data', dataTemp); 
+        m = [dataTemp{1,1}, '|']; 
+        
+        for i=2:row
+            m = cat(2,  m , [num2str(dataTemp{i}), '|'] ) ;  
+        end
+        m = cat(2,  m , num2str(dataTemp{row+1})); 
+   
+        fid = fopen('./database/data.txt','w');
+        fprintf(fid, '%s\n', m); 
+        fclose(fid);
     end
-    m = cat(2,  m , num2str(dataTemp{row+1})); 
-    
-    fid = fopen('./database/data.txt','w');
-    fprintf(fid, '%s\n', m); 
-    fclose(fid);
 end    
 
