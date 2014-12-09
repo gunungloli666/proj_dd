@@ -1,32 +1,4 @@
 function varargout = uji_citra(varargin)
-% UJI_CITRA M-file for uji_citra.fig
-%      UJI_CITRA, by itself, creates a new UJI_CITRA or raises the existing
-%      singleton*.
-%
-%      H = UJI_CITRA returns the handle to a new UJI_CITRA or the handle to
-%      the existing singleton*.
-%
-%      UJI_CITRA('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in UJI_CITRA.M with the given input arguments.
-%
-%      UJI_CITRA('Property','Value',...) creates a new UJI_CITRA or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before uji_citra_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to uji_citra_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help uji_citra
-
-% Last Modified by GUIDE v2.5 08-Dec-2014 17:24:58
-
-% Begin initialization code - DO NOT EDIT
-% clear all; 
-
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -49,20 +21,17 @@ handles.output = hObject;
 
 [handles.database, handles.map ]=  openData(); 
 
+% handles.database
+
+clc;
+
+set(handles.tableJarak, 'columnName', {'Nama Kain', 'Jarak'});
+
 guidata(hObject, handles);
 
 
 function varargout = uji_citra_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
-
-% --- Executes on button press in calculateButton.
-function calculateButton_Callback(hObject, eventdata, handles)
-m = handles; 
-m.x = linspace(0, 10,1000); 
-m.y = sin(m.x); 
-
-guidata(hObject,m ); 
-
 
 
 % --- Executes on button press in hitungButton.
@@ -78,11 +47,11 @@ imshow(m,'parent', handles.axesSnapshot);
 
 all = glcm(m);  % hitung properti GLCM semua sudut
 
-[key, jarak ]= cekCocok(handles.database, all); 
-
+[key, jarak , peta]= cekCocok(handles.database, all); 
 set(handles.ketNamaKain, 'string', key); 
-
 set(handles.ketJarak , 'string', jarak  ); 
+
+set(handles.tableJarak, 'data', peta ); 
 
 guidata(hObject, handles);
 
@@ -113,20 +82,27 @@ imshow(handles.image, 'parent', handles.axesSnapshot);
 guidata(hObject,handles);
 
 % cek dari database mana nama yang cocok... 
-function [key, jarakMin ]  =  cekCocok(varargin)
+function [key, jarakMin, petaJar2Nam]  =  cekCocok(varargin)
 database = varargin{1};
 dataUji = varargin{2} ;
 a = size(database); 
 jarakMin = 10000000; % semaksimum  mungkin 
+petaJar2Nam = cell(a(1), 2); 
+
+k = size(dataUji) ; 
+m =  size(database{1}); 
+
 for i=1:a(1)
     jarak = 0; 
-    for j=2:a(2)
-        jarak = jarak + (database{i}{j} - dataUji{i}); 
+    for j=2:m(1)
+        jarak = jarak + ( str2double(database{i}{j}) - dataUji{j-1})^2; 
     end
     jarak = sqrt(jarak);
+    petaJar2Nam{i,1} = database{i}{1}; 
+    petaJar2Nam{i,2} = jarak; 
     if jarak < jarakMin
         jarakMin = jarak; 
-        key = database{i,1};
+        key = database{i}{1};
     end
 end
 
