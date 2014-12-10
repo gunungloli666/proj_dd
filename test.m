@@ -33,3 +33,11 @@ A = {'main', 'data'};
 B = {{4,3},3}; 
 M = containers.Map(A,B); 
 M('main')
+
+%% 
+GLCM = [0 1 2 3;1 1 2 3;1 0 2 0;0 0 0 3];
+stats = graycoprops(GLCM)
+
+I = imread('circuit.tif');
+GLCM2 = graycomatrix(I,'Offset',[2 0;0 2]);
+stats = graycoprops(GLCM2,{'contrast','homogeneity'})

@@ -92,8 +92,11 @@ varargout{1} = handles.output;
 function inputButton_Callback(hObject, eventdata, handles) 
 
 m = rgb2gray(handles.image); 
+
 all = glcm(m);  
+
 fungsiInput = @hasilInputNama; 
+
 inp = inputNama(); 
 
 setappdata(inp,'fungsiInput', fungsiInput );
@@ -107,6 +110,8 @@ setappdata(inp, 'kosong', handles.kosong);
 setappdata(inp, 'table', handles.tableGLCM);
 
 setappdata(inp, 'dataInput', all); 
+
+setappdata(inp, 'image', handles.image); 
 
 guidata(hObject, handles); 
 

@@ -96,6 +96,9 @@ for i=1:a(1)
     jarak = sqrt(jarak);
     petaJar2Nam{i,1} = database{i}{1}; 
     petaJar2Nam{i,2} = jarak; 
+%     if isnan(jarak)
+%         jarak  = 0; 
+%     end
     if jarak < jarakMin
         jarakMin = jarak; 
         key = database{i}{1};
