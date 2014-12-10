@@ -211,7 +211,9 @@ for a = 0 : 255
     end
 end
    
-all =  cell(20,1); 
+all =  cell(52,1); 
+
+
 G0.asm = asm0;
 G0.kontras = kontras0;
 G0.idm = idm0;
@@ -259,3 +261,90 @@ all{17} = G135.kontras;
 all{18} = G135.idm; 
 all{19} = G135.entropi; 
 all{20} = G135.korelasi;
+
+
+% tambahkan untuk sudut-sudut yang lain... GLCM
+gg = graycomatrix(F, 'offset', [0 3]);
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{21,1} = a.Contrast; 
+all{22,1} = a.Energy; 
+all{23,1} = a.Homogeneity; 
+all{24,1} = a.Correlation; 
+
+gg = graycomatrix(F, 'offset', [-4, 4], 'Numlevels' , 10); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{25,1} = a.Contrast; 
+all{26,1} = a.Energy; 
+all{27,1} = a.Homogeneity; 
+all{28,1} = a.Correlation; 
+
+gg = graycomatrix(F, 'offset', [-4, -4]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{29,1} = a.Contrast; 
+all{30,1} = a.Energy; 
+all{31,1} = a.Homogeneity; 
+all{32,1} = a.Correlation; 
+
+
+
+gg = graycomatrix(F, 'offset', [-4, 0]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{33,1} = a.Contrast; 
+all{34,1} = a.Energy; 
+all{35,1} = a.Homogeneity; 
+all{36,1} = a.Correlation; 
+
+
+gg = graycomatrix(F, 'offset', [0, -4]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{37,1} = a.Contrast; 
+all{38,1} = a.Energy; 
+all{39,1} = a.Homogeneity; 
+all{40,1} = a.Correlation; 
+
+
+gg = graycomatrix(F, 'offset', [-4, -4]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{41,1} = a.Contrast; 
+all{42,1} = a.Energy; 
+all{43,1} = a.Homogeneity; 
+all{44,1} = a.Correlation; 
+
+
+gg = graycomatrix(F, 'offset', [4, 0]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{45,1} = a.Contrast; 
+all{46,1} = a.Energy; 
+all{47,1} = a.Homogeneity; 
+all{48,1} = a.Correlation; 
+
+gg = graycomatrix(F, 'offset', [4, -4]); 
+
+a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+    , 'Homogeneity'}); 
+
+all{49,1} = a.Contrast; 
+all{50,1} = a.Energy; 
+all{51,1} = a.Homogeneity; 
+all{52,1} = a.Correlation; 

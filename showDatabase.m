@@ -22,7 +22,7 @@ function varargout = showDatabase(varargin)
 
 % Edit the above text to modify the response to help showDatabase
 
-% Last Modified by GUIDE v2.5 08-Dec-2014 22:51:00
+% Last Modified by GUIDE v2.5 10-Dec-2014 08:12:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -177,6 +177,7 @@ if ~kosong
     fclose(fid);
     
 else 
+    
     dataInput = varargin{3}; 
     nama = varargin{4}; 
     [row,] = size(dataInput);
@@ -221,4 +222,25 @@ else
         fclose(fid);
     end
 end    
+
+
+
+% --- Executes on button press in refreshButton.
+function refreshButton_Callback(hObject, eventdata, handles)
+% hObject    handle to refreshButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+data = get(handles.tableGLCM,'data'); 
+set(handles.tableGLCM, 'data', data); 
+
+
+% --- Executes on button press in deleteButton.
+function deleteButton_Callback(hObject, eventdata, handles)
+% hObject    handle to deleteButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.tableGLCM, 'data', {}); 
+fid = fopen('./database/data.txt','w');
+fprintf(fid, '%s', ' '); 
+fclose(fid);
 
