@@ -26,6 +26,9 @@ nama = cell(a,1);
  end
 [m,] = size(C{1});
 if m(1)==0
+    F = containers.Map({'empty'} , {'empty'});
     return; 
 end
+        
 F = containers.Map(nama, D);
+

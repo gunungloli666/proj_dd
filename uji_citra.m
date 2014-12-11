@@ -50,6 +50,12 @@ set(handles.ketJarak , 'string', jarak  );
 
 set(handles.tableJarak, 'data', peta ); 
 
+namaGambar = strcat('./database/gambar/', key, '.jpg');
+
+im = imread(namaGambar);
+
+imshow(im, 'parent' ,handles.axesShowResult); 
+
 guidata(hObject, handles);
 
 function kameraButton_Callback(hObject, eventdata, handles)

@@ -131,12 +131,14 @@ table = getappdata(gcf, 'table');
 
 kosong = getappdata(gcf, 'kosong');
 
+image = getappdata(gcf, 'image'); 
+
 str = get(handles.inputNama, 'string'); 
 
 if ~kosong
-    feval(fungsiInput, table ,kosong , dataTable , dataInput , str); 
+    feval(fungsiInput, table ,kosong , dataTable , dataInput , str, image); 
 else
-    feval(fungsiInput, table , kosong , dataInput , str); 
+    feval(fungsiInput, table , kosong , dataInput , str , image); 
 end
 
 close(gcf);

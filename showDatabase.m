@@ -113,6 +113,7 @@ setappdata(inp, 'dataInput', all);
 
 setappdata(inp, 'image', handles.image); 
 
+
 guidata(hObject, handles); 
 
 function snapshotButton_Callback(hObject, eventdata, handles)
@@ -157,10 +158,16 @@ function hasilInputNama(varargin)
 table = varargin{1} ; 
 kosong = varargin{2}; 
 % kosong = get(table,'kosong'); 
+
+rootFolder = './database/gambar/'; 
+
 if ~kosong
     dataTable = get(table,'data'); 
     dataInput = varargin{4}; 
     nama = varargin{5};     
+    
+    image = varargin{6}; 
+    
     [row,] = size(dataInput);
     row = row(1); 
     dataTemp = cell(1,row + 1);
@@ -181,10 +188,17 @@ if ~kosong
     fprintf(fid, '%s\n', m); 
     fclose(fid);
     
-else 
+    fileGambar= strcat(rootFolder, nama, '.jpg');
     
+    imwrite(image,fileGambar, 'jpg');
+    
+else 
     dataInput = varargin{3}; 
+    
     nama = varargin{4}; 
+    
+    image = varargin{5}; 
+    
     [row,] = size(dataInput);
     row = row(1); 
     dataTemp = cell(1,row + 1);
@@ -213,6 +227,9 @@ else
         fid = fopen('./database/data.txt','a');
         fprintf(fid, '%s\n', mm); 
         fclose(fid);
+         
+        fileGambar= strcat(rootFolder, nama, '.jpg');
+        imwrite(image,fileGambar, 'jpg');
     else
         set(table, 'data', dataTemp); 
         m = [dataTemp{1,1}, '|']; 
@@ -225,6 +242,9 @@ else
         fid = fopen('./database/data.txt','w');
         fprintf(fid, '%s\n', m); 
         fclose(fid);
+       
+        fileGambar= strcat(rootFolder, nama, '.jpg');
+        imwrite(image,fileGambar, 'jpg');
     end
 end    
 
@@ -249,3 +269,4 @@ fid = fopen('./database/data.txt','w');
 fprintf(fid, '%s', ' '); 
 fclose(fid);
 
+delete('./database/gambar/*.jpg');
