@@ -210,7 +210,8 @@ for a = 0 : 255
                        GLCM135 (a+1, b+1)/(stdevx135 * stdevy135)) ;
     end
 end
-   
+
+max = 52 + 48 ; 
 all =  cell(52,1); 
 
 
@@ -348,3 +349,62 @@ all{49,1} = a.Contrast;
 all{50,1} = a.Energy; 
 all{51,1} = a.Homogeneity; 
 all{52,1} = a.Correlation; 
+
+
+% loop untuk memeriksa titik-titik pixel bertetangga hingga 20
+it = 5;
+
+% sebenarnya ini bisa lebih banyak...  hanya bisa menimbulkan kesulitan
+% pada pembacaan data karena buffer-overflow... 
+max = 160; 
+
+for aa=1:16:max
+    
+    i = 1; 
+    
+    temp = cell(16,1); 
+    
+    gg = graycomatrix(F, 'offset', [it, 0]); %0 derajat
+
+    a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+        , 'Homogeneity'}); 
+    
+    temp{i,1} = a.Contrast; 
+    temp{i+1,1} = a.Energy; 
+    temp{i+2,1} = a.Homogeneity; 
+    temp{i+3,1} = a.Correlation; 
+    
+    gg = graycomatrix(F, 'offset', [it, -it]); %45 derajat
+
+    a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+        , 'Homogeneity'}); 
+    
+    temp{i+4,1} = a.Contrast; 
+    temp{i+5,1} = a.Energy; 
+    temp{i+6,1} = a.Homogeneity; 
+    temp{i+7,1} = a.Correlation;
+    
+    gg = graycomatrix(F, 'offset', [0, -it]); %90 derajat
+
+    a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+        , 'Homogeneity'}); 
+    
+    temp{i+8,1} = a.Contrast; 
+    temp{i+9,1} = a.Energy; 
+    temp{i+10,1} = a.Homogeneity; 
+    temp{i+11,1} = a.Correlation;
+    
+    gg = graycomatrix(F, 'offset', [-it, -it]); %135 derajat
+
+    a = graycoprops(gg, {'Contrast','Energy', 'Correlation'...
+        , 'Homogeneity'}); 
+    
+    temp{i+12,1} = a.Contrast; 
+    temp{i+13,1} = a.Energy; 
+    temp{i+14,1} = a.Homogeneity; 
+    temp{i+15,1} = a.Correlation;
+  
+    all = cat(1 , all , temp); 
+    
+    it = it +2; 
+end

@@ -17,10 +17,10 @@ else
 end
 
 function uji_citra_OpeningFcn(hObject, eventdata, handles, varargin)
+
 handles.output = hObject;
 
 [handles.database, handles.map ]=  openData(); 
-clc;
 
 set(handles.tableJarak, 'columnName', {'Nama Kain', 'Jarak'});
 
@@ -44,8 +44,12 @@ imshow(m,'parent', handles.axesSnapshot);
 
 all = glcm(m);  % hitung properti GLCM semua sudut
 
-[key, jarak , peta]= cekCocok(handles.database, all); 
+database = handles.database; 
+
+[key, jarak , peta]= cekCocok(database, all); 
+
 set(handles.ketNamaKain, 'string', key); 
+
 set(handles.ketJarak , 'string', jarak  ); 
 
 set(handles.tableJarak, 'data', peta ); 
@@ -89,7 +93,8 @@ function [key, jarakMin, petaJar2Nam]  =  cekCocok(varargin)
 database = varargin{1};
 dataUji = varargin{2} ;
 a = size(database); 
-jarakMin = 10000000; % semaksimum  mungkin 
+
+jarakMin = 1000000000; % semaksimum  mungkin 
 petaJar2Nam = cell(a(1), 2); 
 
 m =  size(database{1}); 
@@ -102,12 +107,8 @@ for i=1:a(1)
     jarak = sqrt(jarak);
     petaJar2Nam{i,1} = database{i}{1}; 
     petaJar2Nam{i,2} = jarak; 
-%     if isnan(jarak)
-%         jarak  = 0; 
-%     end
     if jarak < jarakMin
         jarakMin = jarak; 
         key = database{i}{1};
     end
 end
-
